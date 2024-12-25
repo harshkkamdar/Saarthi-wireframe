@@ -1,19 +1,34 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { BrainCircuit, Settings, LogOut, ChevronDown, MessageSquare } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { BrainCircuit, MessageSquare, Settings } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { UserMenu } from './header/user-menu';
+import { TeamMenu } from './header/team-menu';
+import { User, Team } from '@/types/user';
+
+// Mock data - In a real app, this would come from your auth system
+const currentUser: User = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  role: 'admin',
+};
+
+const teams: Team[] = [
+  { id: '1', name: 'Engineering Team', slug: 'engineering', isAdmin: true },
+  { id: '2', name: 'Marketing Team', slug: 'marketing', isAdmin: false },
+  { id: '3', name: 'Design Team', slug: 'design', isAdmin: false },
+  { id: '4', name: 'Product Team', slug: 'product', isAdmin: true },
+];
 
 export default function Topbar() {
   const router = useRouter();
   const pathname = usePathname();
+  const [currentTeam, setCurrentTeam] = useState(teams[0]);
 
   return (
     <header className="border-b">
@@ -24,32 +39,31 @@ export default function Topbar() {
         </Link>
         <div className="ml-auto flex items-center gap-4">
           <Link href="/conversations">
-            <Button variant="ghost" size="icon" className={pathname === '/conversations' ? 'bg-muted' : ''}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={pathname === '/conversations' ? 'bg-muted' : ''}
+            >
               <MessageSquare className="h-5 w-5" />
             </Button>
           </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                Engineering Team <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Marketing Team</DropdownMenuItem>
-              <DropdownMenuItem>Design Team</DropdownMenuItem>
-              <DropdownMenuItem>Product Team</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="hidden md:inline-flex">
+              {currentUser.role}
+            </Badge>
+            <TeamMenu
+              currentTeam={currentTeam}
+              teams={teams}
+              onTeamChange={setCurrentTeam}
+            />
+          </div>
+
           <Button variant="ghost" size="icon">
             <Settings className="h-5 w-5" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push('/login')}
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
+
+          <UserMenu user={currentUser} />
         </div>
       </div>
     </header>
