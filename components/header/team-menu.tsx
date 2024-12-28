@@ -45,41 +45,28 @@ export function TeamMenu({ currentTeam, teams, onTeamChange }: TeamMenuProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   {team.isAdmin && (
-                    <Badge variant="secondary" className="text-xs">
-                      Admin
-                    </Badge>
+                    <>
+                      <Badge variant="secondary" className="text-xs">
+                        Admin
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/teams/${team.slug}/settings/members`);
+                        }}
+                      >
+                        <Cog className="h-4 w-4" />
+                      </Button>
+                    </>
                   )}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/teams/${team.slug}/settings`);
-                    }}
-                  >
-                    <Cog className="h-4 w-4" />
-                  </Button>
                 </div>
               </div>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         ))}
-        {currentTeam.isAdmin && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push(`/teams/${currentTeam.slug}/settings`)}>
-                <Settings className="mr-2 h-4 w-4" />
-                Team Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push(`/teams/${currentTeam.slug}/members`)}>
-                <Shield className="mr-2 h-4 w-4" />
-                Manage Members
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
