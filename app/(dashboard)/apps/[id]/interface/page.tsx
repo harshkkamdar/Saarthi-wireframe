@@ -1,32 +1,34 @@
+'use client';
+
 import { apps } from '@/config/apps';
-import { ChatInterface } from '@/components/chat/chat-interface';
-import { AudioInterface } from '@/components/audio/audio-interface';
-import { RadiologyInterface } from '@/components/radiology/radiology-interface';
-import { RagInterface } from '@/components/rag/rag-interface';
+import { ChatLayout } from '@/components/chat/chat-layout';
+import { useParams } from 'next/navigation';
+import { Conversation } from '@/types/conversation';
 
-export function generateStaticParams() {
-  return apps.map((app) => ({
-    id: app.id,
-  }));
-}
+// Mock conversations - In real app, fetch from API
+const mockConversations: Conversation[] = [
+  {
+    id: '1',
+    type: 'chat',
+    title: 'Project Planning',
+    timestamp: '2024-03-20T10:00:00Z',
+    preview: 'Let\'s discuss the roadmap for Q2...',
+    appIcon: 'chat',
+  },
+  // ... more conversations
+];
 
-export default function AppInterfacePage({ params }: { params: { id: string } }) {
+export default function AppInterface() {
+  const params = useParams();
   const app = apps.find((a) => a.id === params.id);
   
-  if (!app) {
-    return null;
-  }
+  if (!app) return null;
 
-  switch (app.id) {
-    case 'chat':
-      return <ChatInterface />;
-    case 'audio':
-      return <AudioInterface />;
-    case 'radiology':
-      return <RadiologyInterface />;
-    case 'rag':
-      return <RagInterface />;
-    default:
-      return <div>Interface not implemented</div>;
-  }
+  return (
+    <ChatLayout
+      appDetails={app}
+      conversations={mockConversations}
+      onNewConversation={() => {}}
+    />
+  );
 }
